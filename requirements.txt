@@ -1,0 +1,17 @@
+blinker==1.6.2
+click==7.1.2  # Common version
+colorama==0.4.6
+dnspython==2.4.2
+Flask==1.1.2  # Common version
+gunicorn==20.0.4
+itsdangerous==1.1.0  # Common version
+Jinja2==2.11.3  # Common version
+MarkupSafe==1.1.1  # Common version
+pymongo==4.5.0
+PyPDF2==3.0.1
+python-dateutil==2.8.2
+six==1.16.0
+Werkzeug==1.0.1  # Common version
+python-dotenv
+flask-cors
+requests
