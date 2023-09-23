@@ -184,7 +184,59 @@ def file_upload():
 
 @app.route('/summarize', methods=['POST'])
 def summarize():
-    return {'message': 'Hello summary!'}, 200
+    data = request.get_json()
+    user_id = data.get('user_id')
+
+    # Check if the user folder and PDF file exist
+    user_folder = os.path.join('./file_storage', str(user_id))
+    pdf_filename = os.path.join(user_folder, f'{str(user_id)}.pdf')
+
+    if not os.path.exists(pdf_filename):
+        return jsonify({'message': 'Please upload a PDF file to generate a summary'}), 400
+
+    # Read the PDF file and extract text
+    try:
+        pdf = PdfReader(pdf_filename)
+        text = ''
+        for page in pdf.pages:
+            text += page.extract_text()
+    except Exception as e:
+        return jsonify({'message': 'Error extracting text from PDF', 'error': str(e)}), 500
+
+    # Prepare the data to send to the external API
+    api_url = "https://poyboi--sbuh-1285-cli.modal.run/"
+    api_payload = {
+        "botName": "Bart",
+        "userContext": text,
+        "userId": 'AAAA',  # Assuming user_id is the same as UID in the API
+        "chrContext": "This character is retarded",
+        "testMode": 1,
+        "mode": 2,
+        "qNo": 2
+    }
+    api_headers = {'Content-Type': 'application/json'}
+
+    # Make the API request
+    api_response = requests.post(api_url, json=api_payload, headers=api_headers)
+
+    if api_response.status_code == 200:
+        api_data = api_response.json()
+        conversation = api_data.get("conversation")
+        if conversation:
+            # Store the conversation in the summary collection in MongoDB
+            summary_collection = db.get_collection('summary')
+            # Delete any existing summary for the user
+            summary_collection.delete_one({'user_id': user_id})
+            # Create a new summary document
+            summary_document = {
+                'user_id': user_id,
+                'summary': conversation
+            }
+            summary_collection.insert_one(summary_document)
+        return jsonify({'user_id': user_id, 'conversation': conversation}), 200
+    else:
+        return jsonify({'message': 'API request failed'}), 500
+
 
 @app.errorhandler(404)
 def not_found(error):
