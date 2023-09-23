@@ -6,9 +6,23 @@ from datetime import datetime
 import os
 from dotenv import load_dotenv
 from flask_cors import CORS
-import requests 
+import requests
+import random
+import string
 
 load_dotenv()
+
+
+def generate_random_string():
+    global random_string
+    return ''.join(random.choice(string.ascii_uppercase) for _ in range(4))
+
+
+def get_user_chat_id(user_id):
+    user = db.users.find_one({'_id': ObjectId(user_id)})
+    if user:
+        return user.get('user_chat_id', '')
+    return ''
 
 db_pass = os.environ.get('DATABASE_PASS')
 app = Flask(__name__)
@@ -45,16 +59,17 @@ def login():
             for message in chat_messages
         ]
         
-        return jsonify({'user_id': user_id, 'chat_messages': chat_messages}), 200
+        return jsonify({'user_id': user_id, 'chat_messages': chat_messages, 'random_string': user.get('user_chat_id', '')}), 200
     else:
         # User does not exist, create a new user
         user_id = str(ObjectId())  # Generate a unique user ID
-        db.users.insert_one({'_id': ObjectId(user_id), 'email': email, 'password': password})
+        user_chat_id = generate_random_string();
+        db.users.insert_one({'_id': ObjectId(user_id), 'email': email, 'password': password, 'user_chat_id': user_chat_id})
         
         # Create a new collection for the user using their ID
         db.create_collection(user_id)
-
-        return jsonify({'user_id': user_id, 'chat_messages': []}), 200
+        
+        return jsonify({'user_id': user_id, 'chat_messages': [], 'random_string': user_chat_id}), 200
 
 # Add a chat message route
 @app.route('/add_chat', methods=['POST'])
@@ -81,10 +96,11 @@ def add_chat():
 
     # Prepare the data to send to the external API
     api_url = "https://poyboi--sbuh-1285-cli.modal.run/"
+    user_chat_id = get_user_chat_id(user_id)
     api_payload = {
         "botName": "Bart",
         "userContext": message,
-        "userId": 'AAAA',  # Assuming user_id is the same as UID in the API
+        "userId": user_chat_id,  # Assuming user_id is the same as UID in the API
         "chrContext": "This character is retarded",
         "testMode": 1,
         "mode": 2,
@@ -204,11 +220,12 @@ def summarize():
         return jsonify({'message': 'Error extracting text from PDF', 'error': str(e)}), 500
 
     # Prepare the data to send to the external API
+    user_chat_id = get_user_chat_id(user_id)
     api_url = "https://poyboi--sbuh-1285-cli.modal.run/"
     api_payload = {
         "botName": "Bart",
         "userContext": text,
-        "userId": 'AAAA',  # Assuming user_id is the same as UID in the API
+        "userId": user_chat_id,  # Assuming user_id is the same as UID in the API
         "chrContext": "This character is retarded",
         "testMode": 1,
         "mode": 2,
@@ -236,7 +253,6 @@ def summarize():
         return jsonify({'user_id': user_id, 'conversation': conversation}), 200
     else:
         return jsonify({'message': 'API request failed'}), 500
-
 
 @app.errorhandler(404)
 def not_found(error):
