@@ -45,7 +45,7 @@ def login():
             for message in chat_messages
         ]
         
-        return jsonify({'user_id': user_id, 'chat_messages': chat_messages})
+        return jsonify({'user_id': user_id, 'chat_messages': chat_messages}), 200
     else:
         # User does not exist, create a new user
         user_id = str(ObjectId())  # Generate a unique user ID
@@ -54,7 +54,7 @@ def login():
         # Create a new collection for the user using their ID
         db.create_collection(user_id)
 
-        return jsonify({'user_id': user_id, 'chat_messages': []})
+        return jsonify({'user_id': user_id, 'chat_messages': []}), 200
 
 # Add a chat message route
 @app.route('/add_chat', methods=['POST'])
@@ -65,7 +65,7 @@ def add_chat():
     is_user = data.get('is_user')
 
     if not ObjectId.is_valid(user_id):
-        return jsonify({'message': 'Invalid user_id'})
+        return jsonify({'message': 'Invalid user_id'}), 404
 
     if is_user is None:
         is_user = True  # If is_user is not provided, assume it's true (from the frontend)
@@ -85,8 +85,8 @@ def add_chat():
         "botName": "Bart",
         "userContext": message,
         "userId": 'AAAA',  # Assuming user_id is the same as UID in the API
-        "chrContext": "",
-        "testMode": 0,
+        "chrContext": "This character is retarded",
+        "testMode": 1,
         "mode": 2,
         "qNo": 2
     }
@@ -106,9 +106,9 @@ def add_chat():
                 'is_user': False
             }
             db[user_id].insert_one(chat_message)
-        return jsonify({'message': "true"})
+        return jsonify({'message': "true"}), 200
     else:
-        return jsonify({'message': 'API request failed'})
+        return jsonify({'message': 'API request failed'}), 500
 
 @app.route('/getchat', methods=['POST'])
 def get_chat():
@@ -116,7 +116,7 @@ def get_chat():
     user_id = data.get('id')
 
     if not ObjectId.is_valid(user_id):
-        return jsonify({'message': 'Invalid user_id'})
+        return jsonify({'message': 'Invalid user_id'}), 404
 
     # Check if the user exists
     user = db.users.find_one({'_id': ObjectId(user_id)})
@@ -136,26 +136,26 @@ def get_chat():
             for message in chat_messages
         ]
         
-        return jsonify({'user_id': str(user_id), 'chat_messages': chat_messages})
+        return jsonify({'user_id': str(user_id), 'chat_messages': chat_messages}), 200
     else:
-        return jsonify({'message': 'User not found'})
+        return jsonify({'message': 'User not found'}), 404
 
 @app.route('/file_upload', methods=['POST'])
 def file_upload():
     # Check if a file was included in the request
     if 'file' not in request.files:
-        return jsonify({'message': 'No file part'})
+        return jsonify({'message': 'No file part'}), 400
 
     file = request.files['file']
 
     # Check if the file has a PDF extension
     if not file.filename.endswith('.pdf'):
-        return jsonify({'message': 'File is not a PDF'})
+        return jsonify({'message': 'File is not a PDF'}), 400
 
     user_id = request.form.get('user_id')  # Assuming you send user_id as a form field
 
     if not ObjectId.is_valid(user_id):
-        return jsonify({'message': 'Invalid user_id'})
+        return jsonify({'message': 'Invalid user_id'}), 400
 
     # Create a folder for the user if it doesn't exist
     user_folder = os.path.join('./file_storage', str(user_id))
@@ -178,13 +178,21 @@ def file_upload():
         for page in pdf.pages:
             text += page.extract_text()
 
-        return jsonify({'text': text})
+        return jsonify({'text': text}), 200
     except Exception as e:
-        return jsonify({'message': 'Error extracting text from PDF', 'error': str(e)})
+        return jsonify({'message': 'Error extracting text from PDF', 'error': str(e)}), 500
 
 @app.route('/summarize', methods=['POST'])
 def summarize():
-    return {'message': 'Hello summary!'}
+    return {'message': 'Hello summary!'}, 200
 
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=8080, debug=True)
+@app.errorhandler(404)
+def not_found(error):
+    return {'Error Occured': str("Breh, are you retarded, atleast get the route correct (╬▔皿▔)╯"), "error": str(error)}, 404
+
+@app.errorhandler(500)
+def internal_error(error):
+    return {'Error Occured': str("Server irl rn : （；´д｀）ゞ"), "error": str(error)}, 500
+
+if __name__ == '__main__':
+    app.run(debug=True, port=os.getenv("PORT", default=5000))
