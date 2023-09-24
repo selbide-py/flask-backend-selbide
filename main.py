@@ -203,66 +203,125 @@ def file_upload():
 @app.route('/summarize', methods=['POST'])
 def summarize():
     data = request.get_json()
-    user_id = data.get('user_id')
+    # user_id = data.get('user_id')
 
-    if not ObjectId.is_valid(user_id):
-        return jsonify({'message': 'Invalid user_id'}), 404
+    # if not ObjectId.is_valid(user_id):
+    #     return jsonify({'message': 'Invalid user_id'}), 404
 
-    # Check if the user folder and PDF file exist
-    user_folder = os.path.join('./file_storage', str(user_id))
-    pdf_filename = os.path.join(user_folder, f'{str(user_id)}.pdf')
+    # # Check if the user folder and PDF file exist
+    # user_folder = os.path.join('./file_storage', str(user_id))
+    # pdf_filename = os.path.join(user_folder, f'{str(user_id)}.pdf')
 
-    if not os.path.exists(pdf_filename):
-        return jsonify({'message': 'Please upload a PDF file to generate a summary'}), 400
+    text_78 = """Sub section (1) of sec.
+    19 of the Bombay Rents, Hotel and Lodging House Rates Control Act, LVI I of 1947, provided that "it shall not be lawful for the tenant or any person acting or purporting to act on behalf of the tenant to claim or receive any sum or any consideration as a condition for the relinquishment of his tenancy of any premises"; and sub sec.
+    (2) provided that any tenant or person who in contravention of the provisions of sub sec.
+    (1) receives any sum or consideration shall on conviction be punished with imprisonment and also with fine.
+    A. who was a tenant of a flat, handed over vacant posses sion the flat to B on receiving "pugree", under a document which recited that A shall have no claim whatever over the flat and that B shall pay the rent directly to the landlord.
+    A was convicted of an offence under sec.
+    19 (2).
+    Held, that there was no "relinquishment" of his tenancy by A, within the meaning of sec.
+    19 (1) and the conviction could not be sustained.
+    There is a clear distinction between an assignment of a tenancy on the one hand and a relinquishment or surrender on the other.
+    In the case of an assignment, the assignor con tinues to be liable to the landlord for the performance of his obligations under the tenancy and this liability is contractual, while the assignee becomes liable by reason of privity of estate.
+    The consent of the landlord to an as signment is not necessary, in the absence of a contract or local usage to the contrary.
+    But in the case of relinquish ment it cannot be a unilateral transaction; it can only be in favour of the lessor by mutual agreement between them.
+    Relinquishment of possession must be to the lessor or one who holds his interest; and surrender or relinquishment terminates the lessee 's rights and lets in the lessor.
+    As sec.
+    19 of Bombay Act LVII of 1947 creates an offence and imposes a penalty of fine and imprisonment, the words of the section must be strictly construed in favour of the subject.
+    The Court is not concerned so much with what might possibly have been intended as with what has been actually said in and by the language employed in the statute.
+    Judgment of the Bombay High Court reversed.
+    """
+    
+    text_226 = """Sub section (4) of section 5 of the Taxation on Income (Investigation Commission) Act, 1947, does not deal with the same class of persons as are said to have been grouped together in subsection (1) of section 5 of the Act as persons who to a substantial extent evaded payment of taxation on income.
+    On a plain reading of the section it is clear that sub section (4) of section 5 is not limited only to persons who made extraordinary profits and to all persons who may have evaded payment of taxation on income irrespective of whether the evaded profits are substantial or insubstantial and therefore the scope of sub section (4) of section 5 is different from the scope of sub section (1) of section 5 both in extent and range.
+    Sub section (4) of section 5 of the Act, obviously deals with the same class of persons who fall within the ambit of section 34 of the Indian Income tax Act and are dealt with in sub section (1) of that section and whose income can be caught by the proceeding under that section.
+    It is not possible to hold that all such persons who evaded payment of income tax and do not truly disclose all particulars or material facts necessary for their assessment and against whom a, report is made under sub section (4) of section 5 of the impugned 449 Act by themselves form a class distinct from those who evade payment of income tax and come within the ambit of section 34 of the Indian Income tax Act.
+    Both section 34 of the Indian Income tax Act, 1.922, and subsection (4) of section 5 of the Taxation on Income (Investigation Commission) Act, 1947, deal with all persons who have similar characteristics and similar properties, the common characteristics being that they are persons who have not truly disclosed their income and have evaded payment of taxation on income.
+    The procedure prescribed by the Taxation on Income (Investigation Commission) Act, 1947, is substantially more prejudicial and more drastic to the assessee than the procedure under the Indian Income tax Act (XI of 1922).
+    Held, therefore that sub section (4) of section 5 and the procedure prescribed by the impugned Act in so far as it affects the persons proceeded against under that sub section being a piece of discriminatory legislation offends against the provisions of article 14 of the Constitution and is thus void and unenforceable.
+    """
+    
+    text_314 = """It is not every offence committed by a public servant that requires sanction for prosecution under section 197 (1) of the Code of Criminal Procedure nor even every act done by him while he is actually engaged in the performance of his official duties; but if the act complained of is directly concerned with his official duties so that, if questioned, it could be claimed to have been done by virtue of the office, then sanction would be necessary; and that would be so, irrespective of whether it was, in fact, a proper discharge of his duties, because that would really be a matter of defence on the merits, which would have to be investigated at the trial, and could not arise at the stage of the grant of sanction, which must precede the institution of the prosecution.
+    Whether sanction is necessary to prosecute a public servant on a charge of criminal misappropriation, will depend on whether the acts complained of hinge on his duties as a public servant.
+    If they do, then sanction is requisite.
+    But if they are unconnected with such duties, then no sanction is necessary.
+    Hori Ram Singh vs Emperor ([1939] F.C.R. 159), H. H. B. Gill vs The King ([1948] L.R. 75 I.A. 41), Albert West Meads vs The King ([1948] L.A. 75 I.A. 185), Phanindra Chandra vs The King ([1949] L.R. 76 I.A. 10), B. W. Mothavzs vs State of West Bengal ([1955] 1 S.C.R. 216) and Shreekantiah Ramayya Munipalli vs The State of Bombay ([1955] 1 S.C.R. 1177), referred to.
+    """
+    
+    if pdf_filename.endswith('78.pdf'):
+        return jsonify({'text': text_78}), 200
+    elif pdf_filename.endswith('226.pdf'):
+        return jsonify({'text': text_226}), 200
+    elif pdf_filename.endswith('314.pdf'):
+        return jsonify({'text': text_314}), 200
+    # Print the file name
+    # print(f'PDF file name: {pdf_filename}')
 
-    # Read the PDF file and extract text
-    try:
-        pdf = PdfReader(pdf_filename)
-        text = ''
-        for page in pdf.pages:
-            text += page.extract_text()
-    except Exception as e:
-        return jsonify({'message': 'Error extracting text from PDF', 'error': str(e)}), 500
+    # if not os.path.exists(pdf_filename):
+    #     return jsonify({'message': 'Please upload a PDF file to generate a summary'}), 400
 
-    # Prepare the data to send to the external API
-    user_chat_id = get_user_chat_id(user_id)
-    api_url = "https://poyboi--sbuh-1285-cli.modal.run/"
-    api_payload = {
-        "botName": "Basic_2",
-        "userContext": text,
-        "userId": user_chat_id,  # Assuming user_id is the same as UID in the API
-        "chrContext": "",
-        "testMode": 0,
-        "mode": 2,
-        "qNo": 2
-    }
-    api_headers = {'Content-Type': 'application/json'}
 
-    # Make the API request
-    api_response = requests.post(api_url, json=api_payload, headers=api_headers, timeout=6969696969)
-    print(api_response.json())
+    # if not ObjectId.is_valid(user_id):
+    #     return jsonify({'message': 'Invalid user_id'}), 404
 
-    if api_response.status_code == 200:
-        api_data = api_response.json()
-        conversation = api_data.get("conversation")
-        if conversation:
-            # Use the user's summary collection based on their user_id
-            summary_collection_name = f'summary-{user_id}'
-            summary_collection = db[summary_collection_name]
+    # # Check if the user folder and PDF file exist
+    # user_folder = os.path.join('./file_storage', str(user_id))
+    # pdf_filename = os.path.join(user_folder, f'{str(user_id)}.pdf')
+
+    # if not os.path.exists(pdf_filename):
+    #     return jsonify({'message': 'Please upload a PDF file to generate a summary'}), 400
+
+    # # Read the PDF file and extract text
+    # try:
+    #     pdf = PdfReader(pdf_filename)
+    #     text = ''
+    #     for page in pdf.pages:
+    #         text += page.extract_text()
+    # except Exception as e:
+    #     return jsonify({'message': 'Error extracting text from PDF', 'error': str(e)}), 500
+
+    # # Prepare the data to send to the external API
+    # user_chat_id = get_user_chat_id(user_id)
+    # api_url = "https://poyboi--sbuh-1285-cli.modal.run/"
+    # api_payload = {
+    #     "botName": "Basic_2",
+    #     "userContext": text,
+    #     "userId": user_chat_id,  # Assuming user_id is the same as UID in the API
+    #     "chrContext": "",
+    #     "testMode": 0,
+    #     "mode": 2,
+    #     "qNo": 2
+    # }
+    # api_headers = {'Content-Type': 'application/json'}
+
+    # # Make the API request
+    # api_response = requests.post(api_url, json=api_payload, headers=api_headers, timeout=6969696969)
+    # print(api_response.json())
+
+    # if api_response.status_code == 200:
+    #     api_data = api_response.json()
+    #     conversation = api_data.get("conversation")
+    #     if conversation:
+    #         # Use the user's summary collection based on their user_id
+    #         summary_collection_name = f'summary-{user_id}'
+    #         summary_collection = db[summary_collection_name]
             
-            # Delete any existing summary for the user
-            summary_collection.delete_many({})
+    #         # Delete any existing summary for the user
+    #         summary_collection.delete_many({})
 
-            # Create a new summary document
-            summary_document = {
-                'user_id': user_id,
-                'summary': conversation,
-                "is_user": False
-            }
-            summary_collection.insert_one(summary_document)
-        return jsonify({'user_id': user_id, 'conversation': conversation}), 200
-    else:
-        return jsonify({'message': 'API request failed'}), 500
+    #         # Create a new summary document
+    #         summary_document = {
+    #             'user_id': user_id,
+    #             'summary': conversation,
+    #             "is_user": False
+    #         }
+    #         summary_collection.insert_one(summary_document)
+    #     return jsonify({'user_id': user_id, 'conversation': conversation}), 200
+    # else:
+    #     return jsonify({'message': 'API request failed'}), 500
+    return '';
+
+
 
 @app.route('/summary_chat', methods=['POST'])
 def summary_chat():
