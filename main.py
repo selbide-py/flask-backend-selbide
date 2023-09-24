@@ -258,6 +258,97 @@ def summarize():
     else:
         return jsonify({'message': 'API request failed'}), 500
 
+@app.route('/summary_chat', methods=['POST'])
+def summary_chat():
+    data = request.get_json()
+    user_id = data.get('user_id')
+    message = data.get('message')
+    is_user = data.get('is_user')
+
+    if not ObjectId.is_valid(user_id):
+        return jsonify({'message': 'Invalid user_id'}), 404
+
+    # Create a summary collection for the user if it doesn't exist
+    summary_collection_name = f'summary-{user_id}'
+    if summary_collection_name not in db.list_collection_names():
+        db.create_collection(summary_collection_name)
+
+    summary_collection = db[summary_collection_name]
+
+    if is_user is None:
+        is_user = True 
+    # Prepare the chat message
+    chat_message = {
+        'timestamp': datetime.now(),
+        'message': message,
+        'is_user': is_user  # Assume it's a user message
+    }
+
+    # Insert the chat message into the user's summary collection
+    summary_collection.insert_one(chat_message)
+
+    api_url = "https://poyboi--sbuh-1285-cli.modal.run/"
+    user_chat_id = get_user_chat_id(user_id)
+    api_payload = {
+        "botName": "Bart",
+        "userContext": message,
+        "userId": user_chat_id,  # Assuming user_id is the same as UID in the API
+        "chrContext": "This character is retarded",
+        "testMode": 1,
+        "mode": 2,
+        "qNo": 2
+    }
+    api_headers = {'Content-Type': 'application/json'}
+
+    # Make the API request
+    api_response = requests.post(api_url, json=api_payload, headers=api_headers)
+
+    if api_response.status_code == 200:
+        api_data = api_response.json()
+        conversation = api_data.get("conversation")
+        if conversation:
+            # Store the conversation in MongoDB
+            chat_message = {
+                'timestamp': datetime.now(),
+                'message': conversation,
+                'is_user': False
+            }
+            summary_collection.insert_one(chat_message)
+        return jsonify({'message': "true"}), 200
+    else:
+        return jsonify({'message': 'API request failed'}), 500
+
+
+@app.route('/get_summary_chat', methods=['POST'])
+def get_summary_chat():
+    data = request.get_json()
+    user_id = data.get('user_id')
+
+    if not ObjectId.is_valid(user_id):
+        return jsonify({'message': 'Invalid user_id'}), 404
+
+    # Check if the summary collection for the user exists
+    summary_collection_name = f'summary-{user_id}'
+    if summary_collection_name in db.list_collection_names():
+        summary_collection = db[summary_collection_name]
+
+        # Fetch chat messages from the summary collection
+        chat_messages = list(summary_collection.find())
+
+        # Convert ObjectId to string for each message
+        chat_messages = [
+            {
+                '_id': str(message['_id']),
+                'timestamp': message['timestamp'],
+                'message': message['message'],
+                'is_user': message['is_user']
+            }
+            for message in chat_messages
+        ]
+
+        return jsonify({'user_id': str(user_id), 'chat_messages': chat_messages}), 200
+    else:
+        return jsonify({'message': 'Summary chat data not found'}), 404
 @app.errorhandler(404)
 def not_found(error):
     return {'Error Occured': str("Breh, are you retarded, atleast get the route correct (╬▔皿▔)╯"), "error": str(error)}, 404
