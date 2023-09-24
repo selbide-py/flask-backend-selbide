@@ -199,6 +199,10 @@ def file_upload():
         return jsonify({'message': 'Error extracting text from PDF', 'error': str(e)}), 500
 
 @app.route('/summarize', methods=['POST'])
+def get_summary():
+    return jsonify({'sun': 'lauda lele mera'})
+
+@app.route('/summarize1', methods=['POST'])
 def summarize():
     data = request.get_json()
     user_id = data.get('user_id')
