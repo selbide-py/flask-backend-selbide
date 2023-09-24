@@ -240,6 +240,7 @@ def summarize():
 
     # Make the API request
     api_response = requests.post(api_url, json=api_payload, headers=api_headers, timeout=6969696969)
+    print(api_response)
 
     if api_response.status_code == 200:
         api_data = api_response.json()
@@ -255,7 +256,8 @@ def summarize():
             # Create a new summary document
             summary_document = {
                 'user_id': user_id,
-                'summary': conversation
+                'summary': conversation,
+                "is_user": False
             }
             summary_collection.insert_one(summary_document)
         return jsonify({'user_id': user_id, 'conversation': conversation}), 200
