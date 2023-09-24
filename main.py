@@ -203,14 +203,14 @@ def file_upload():
 @app.route('/summarize', methods=['POST'])
 def summarize():
     data = request.get_json()
-    # user_id = data.get('user_id')
+    user_id = data.get('user_id')
 
-    # if not ObjectId.is_valid(user_id):
-    #     return jsonify({'message': 'Invalid user_id'}), 404
+    if not ObjectId.is_valid(user_id):
+        return jsonify({'message': 'Invalid user_id'}), 404
 
-    # # Check if the user folder and PDF file exist
-    # user_folder = os.path.join('./file_storage', str(user_id))
-    # pdf_filename = os.path.join(user_folder, f'{str(user_id)}.pdf')
+    # Check if the user folder and PDF file exist
+    user_folder = os.path.join('./file_storage', str(user_id))
+    pdf_filename = os.path.join(user_folder, f'{str(user_id)}.pdf')
 
     text_78 = """Sub section (1) of sec.
     19 of the Bombay Rents, Hotel and Lodging House Rates Control Act, LVI I of 1947, provided that "it shall not be lawful for the tenant or any person acting or purporting to act on behalf of the tenant to claim or receive any sum or any consideration as a condition for the relinquishment of his tenancy of any premises"; and sub sec.
