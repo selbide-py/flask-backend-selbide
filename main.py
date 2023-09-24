@@ -240,7 +240,7 @@ def summarize():
 
     # Make the API request
     api_response = requests.post(api_url, json=api_payload, headers=api_headers, timeout=6969696969)
-    print(api_response)
+    print(api_response.json())
 
     if api_response.status_code == 200:
         api_data = api_response.json()
