@@ -109,7 +109,7 @@ def add_chat():
     api_headers = {'Content-Type': 'application/json'}
 
     # Make the API request
-    api_response = requests.post(api_url, json=api_payload, headers=api_headers)
+    api_response = requests.post(api_url, json=api_payload, headers=api_headers, timeout=6969696969)
 
     if api_response.status_code == 200:
         print(api_response.json())
@@ -239,7 +239,7 @@ def summarize():
     api_headers = {'Content-Type': 'application/json'}
 
     # Make the API request
-    api_response = requests.post(api_url, json=api_payload, headers=api_headers)
+    api_response = requests.post(api_url, json=api_payload, headers=api_headers, timeout=6969696969)
 
     if api_response.status_code == 200:
         api_data = api_response.json()
@@ -289,7 +289,7 @@ def summary_chat():
     summary_collection.insert_one(chat_message)
 
     api_url = "https://poyboi--sbuh-1285-cli.modal.run/"
-    user_chat_id = get_user_chat_id(user_id)
+    user_chat_id = get_user_chat_id(user_id)    
     api_payload = {
         "botName": "Bart",
         "userContext": message,
@@ -302,7 +302,7 @@ def summary_chat():
     api_headers = {'Content-Type': 'application/json'}
 
     # Make the API request
-    api_response = requests.post(api_url, json=api_payload, headers=api_headers)
+    api_response = requests.post(api_url, json=api_payload, headers=api_headers, timeout=6969696969)
 
     if api_response.status_code == 200:
         api_data = api_response.json()
