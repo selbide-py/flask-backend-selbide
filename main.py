@@ -98,12 +98,12 @@ def add_chat():
     api_url = "https://poyboi--sbuh-1285-cli.modal.run/"
     user_chat_id = get_user_chat_id(user_id)
     api_payload = {
-        "botName": "Bart",
+        "botName": "Basic_1",
         "userContext": message,
         "userId": user_chat_id,  # Assuming user_id is the same as UID in the API
         "chrContext": "",
-        "testMode": 1,
-        "mode": 2,
+        "testMode": 0,
+        "mode": 3,
         "qNo": 2
     }
     api_headers = {'Content-Type': 'application/json'}
