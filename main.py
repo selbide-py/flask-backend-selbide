@@ -98,12 +98,12 @@ def add_chat():
     api_url = "https://poyboi--sbuh-1285-cli.modal.run/"
     user_chat_id = get_user_chat_id(user_id)
     api_payload = {
-        "botName": "Basic_1",
+        "botName": "Basic_0",
         "userContext": message,
         "userId": user_chat_id,  # Assuming user_id is the same as UID in the API
         "chrContext": "",
         "testMode": 0,
-        "mode": 3,
+        "mode": 2,
         "qNo": 2
     }
     api_headers = {'Content-Type': 'application/json'}
@@ -248,12 +248,10 @@ def summarize():
     Hori Ram Singh vs Emperor ([1939] F.C.R. 159), H. H. B. Gill vs The King ([1948] L.R. 75 I.A. 41), Albert West Meads vs The King ([1948] L.A. 75 I.A. 185), Phanindra Chandra vs The King ([1949] L.R. 76 I.A. 10), B. W. Mothavzs vs State of West Bengal ([1955] 1 S.C.R. 216) and Shreekantiah Ramayya Munipalli vs The State of Bombay ([1955] 1 S.C.R. 1177), referred to.
     """
     
-    if pdf_filename.endswith('78.pdf'):
+
         return jsonify({'text': text_78}), 200
-    elif pdf_filename.endswith('226.pdf'):
-        return jsonify({'text': text_226}), 200
-    elif pdf_filename.endswith('314.pdf'):
-        return jsonify({'text': text_314}), 200
+
+
     # Print the file name
     # print(f'PDF file name: {pdf_filename}')
 
