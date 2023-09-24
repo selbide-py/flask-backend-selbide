@@ -199,14 +199,14 @@ def file_upload():
     except Exception as e:
         return jsonify({'message': 'Error extracting text from PDF', 'error': str(e)}), 500
 
-@app.route('/summarize', methods=['POST'])
-def get_summary():
-    return jsonify({'sun': 'lauda lele mera'})
 
-@app.route('/summarize1', methods=['POST'])
+@app.route('/summarize', methods=['POST'])
 def summarize():
     data = request.get_json()
     user_id = data.get('user_id')
+
+    if not ObjectId.is_valid(user_id):
+        return jsonify({'message': 'Invalid user_id'}), 404
 
     # Check if the user folder and PDF file exist
     user_folder = os.path.join('./file_storage', str(user_id))
@@ -228,11 +228,11 @@ def summarize():
     user_chat_id = get_user_chat_id(user_id)
     api_url = "https://poyboi--sbuh-1285-cli.modal.run/"
     api_payload = {
-        "botName": "Bart",
+        "botName": "Basic_2",
         "userContext": text,
         "userId": user_chat_id,  # Assuming user_id is the same as UID in the API
-        "chrContext": "This character is retarded",
-        "testMode": 1,
+        "chrContext": "",
+        "testMode": 0,
         "mode": 2,
         "qNo": 2
     }
@@ -245,10 +245,13 @@ def summarize():
         api_data = api_response.json()
         conversation = api_data.get("conversation")
         if conversation:
-            # Store the conversation in the summary collection in MongoDB
-            summary_collection = db.get_collection('summary')
+            # Use the user's summary collection based on their user_id
+            summary_collection_name = f'summary-{user_id}'
+            summary_collection = db[summary_collection_name]
+            
             # Delete any existing summary for the user
-            summary_collection.delete_one({'user_id': user_id})
+            summary_collection.delete_many({})
+
             # Create a new summary document
             summary_document = {
                 'user_id': user_id,
