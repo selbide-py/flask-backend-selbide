@@ -101,7 +101,7 @@ def add_chat():
         "botName": "Bart",
         "userContext": message,
         "userId": user_chat_id,  # Assuming user_id is the same as UID in the API
-        "chrContext": "This character is retarded",
+        "chrContext": "",
         "testMode": 1,
         "mode": 2,
         "qNo": 2
@@ -349,6 +349,7 @@ def get_summary_chat():
         return jsonify({'user_id': str(user_id), 'chat_messages': chat_messages}), 200
     else:
         return jsonify({'message': 'Summary chat data not found'}), 404
+
 @app.errorhandler(404)
 def not_found(error):
     return {'Error Occured': str("Breh, are you retarded, atleast get the route correct (╬▔皿▔)╯"), "error": str(error)}, 404
